@@ -2,7 +2,6 @@
 
 Reference to the official PyTorch ImageNet example documentation.
 
-
 # Distributed Training with ResNet50 on Kubernetes
 
 This documentation provides instructions for setting up and running distributed training using ResNet50 with the NCCL backend on Kubernetes.
@@ -10,8 +9,9 @@ This documentation provides instructions for setting up and running distributed 
 ## Prerequisites
 
 - Kubernetes cluster with GPU support.
-- Docker image `paawanpurdhani/multinodes:0.2`.
+- Docker image `dockerimage/multinodes:0.2`.
 - Access to a shared storage path on the host (`/raid`).
+- Password-less SSH access between the servers.
 
 ## Setup
 
@@ -87,19 +87,20 @@ Run the following commands on each node to start the distributed training:
 ### Node 0
 
 ```bash
-python main.py -a resnet50 --dist-url 'tcp://10.10.246.244:4000' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --batch-size 128 --rank 0 image2012
+python main.py -a resnet50 --dist-url 'tcp://10.10.116.244:4000' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --batch-size 128 --rank 0 image2012
 ```
 
 ### Node 1
 
 ```bash
-python main.py -a resnet50 --dist-url 'tcp://10.10.246.244:4000' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --batch-size 128 --rank 1 image2012
+python main.py -a resnet50 --dist-url 'tcp://10.10.343.244:4000' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --batch-size 128 --rank 1 image2012
 ```
 
 ## Notes
 
-- Ensure that the IP address (`10.10.246.244`) is accessible from both nodes.
+- Ensure that the IP address (`10.10.424.244`) is accessible from both nodes.
 - The `image2012` argument is the path to the dataset you are using for training.
+- Ensure that password-less SSH access is set up between the servers to allow seamless communication.
 
 ## Additional Resources
 
@@ -109,6 +110,7 @@ For more details on distributed training with PyTorch, refer to the official [Py
 
 - If you encounter any issues with pod scheduling or GPU allocation, verify your Kubernetes node labels and GPU resource availability.
 - For any networking issues, ensure that the specified `dist-url` is reachable from both nodes.
+- Check that password-less SSH is properly configured to prevent connectivity issues between the nodes.
 
 ## Contributing
 

@@ -112,6 +112,43 @@ For more details on distributed training with PyTorch, refer to the official [Py
 - For any networking issues, ensure that the specified `dist-url` is reachable from both nodes.
 - Check that password-less SSH is properly configured to prevent connectivity issues between the nodes.
 
-## Contributing
+---
 
-Contributions are welcome! Please submit a pull request or open an issue on the GitHub repository.
+## Saving Logs
+
+To save logs with the current date and time:
+
+#### Node 0
+
+```bash
+LOG_FILE="training_$(date +'%Y%m%d_%H%M%S').log"
+python main.py -a resnet18 --dist-url 'tcp://10.10.246.202:9090' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --rank 0 --epochs 2 image2012 > "$LOG_FILE" 2>&1
+```
+
+#### Node 1
+
+```bash
+LOG_FILE="training_$(date +'%Y%m%d_%H%M%S').log"
+python main.py -a resnet18 --dist-url 'tcp://10.10.246.202:9090' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --rank 1 --epochs 2 image2012 > "$LOG_FILE" 2>&1
+```
+
+Alternatively, you can use `tee` to append logs to a file:
+
+#### Node 0
+
+```bash
+python main.py -a resnet18 --dist-url 'tcp://10.10.246.202:9090' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --rank 0 --epochs 2 image2012 2>&1 | tee -a training.log
+```
+
+#### Node 1
+
+```bash
+python main.py -a resnet18 --dist-url 'tcp://10.10.246.202:9090' --dist-backend 'nccl' --multiprocessing-distributed --world-size 2 --rank 1 --epochs 2 image2012 2>&1 | tee -a training.log
+```
+
+This addition includes the commands for saving logs with the current date and time, as well as the alternative method using `tee` to append logs to a file.
+
+
+
+
+
